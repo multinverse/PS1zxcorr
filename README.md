@@ -1,12 +1,12 @@
 # PS1code
 
-This code was created by Alessandro Marins (University of Sao Paulo) and is owned by BINGO Telescope
-Its use is to extract optical data from Pan-STARRS1 telescope
+This code was created by Alessandro Marins (University of Sao Paulo) and is owned by BINGO Telescope,
+Its use is to extract optical data from Pan-STARRS1 telescope,
 Any question about your operation, please, contact me in alessandro.marins@usp.br
 
-To use it, run run_PS1Code.py
+To use it, run run_PS1Code.py.
 
-The variables and conditions are in parameters.ini
+The variables and conditions are in parameters.ini.
 Any variable can be altered in terminal with "--" and the same name of the variable in parameter.ini plus underline and the name of class, except the General class, in this use it only variable name.
 All the letters in minuscule.
 
