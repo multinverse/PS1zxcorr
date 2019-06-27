@@ -13,4 +13,4 @@ All the letters in minuscule.
 For example:
 python run_PS1Code.py --nside 1024 --use_constraint False --band_flags i --use_declination_strips False
 
-You need to check if there are the Python libraries: numpy, healpy, sys, os, ConfigParser, astropy
+You need to check if there are the Python libraries: numpy, healpy, sys, os, ConfigParser, astropy, mastcasjobs, requests, re, json and argparse.
