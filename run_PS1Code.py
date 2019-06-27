@@ -63,9 +63,9 @@ parser.add_argument('--table_flags'    , action = 'store', dest = 'table_flags' 
 parser.add_argument('--band_flags'     , action = 'store', dest = 'band_flags'     , default = band_flags     , help = '')
 parser.add_argument('--hex_flags'      , action = 'store', dest = 'hex_flags'      , default = hex_flags      , help = '')
 
-parser.add_argument('--dec_strips'     , action = 'store', dest = 'dec_strips'     , default = dec_strips     , help = '')
-parser.add_argument('--dec_center'     , action = 'store', dest = 'dec_center'     , default = dec_center     , help = '')
-parser.add_argument('--dec_width'      , action = 'store', dest = 'dec_width'      , default = dec_width      , help = '')
+parser.add_argument('--use_declination_strips'     , action = 'store', dest = 'dec_strips'     , default = dec_strips     , help = '')
+parser.add_argument('--declination_center'     , action = 'store', dest = 'dec_center'     , default = dec_center     , help = '')
+parser.add_argument('--declination_width'      , action = 'store', dest = 'dec_width'      , default = dec_width      , help = '')
 
 parser.add_argument('--user_ps1'      , action = 'store', dest = 'user'            , default = user           , help = '')
 parser.add_argument('--pwd_ps1'       , action = 'store', dest = 'pwd'             , default = pwd            , help = '')
