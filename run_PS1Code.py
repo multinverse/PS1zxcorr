@@ -143,7 +143,7 @@ params = {"NSIDE":NSIDE, "NPIX":NPIX}
 params["NSIDE max"] = 8*mx.maxnside(user,pwd)
 params_strips['NSIDE']=params['NSIDE']
 
-print("Maximum resolution is NSIDE: {}\n".format(params['NSIDE max']))
+print("Maximum resolution is NSIDE: {}\n".format(params['NSIDE max']/8))
 print("You'll use")
 print("NSIDE      : {}".format(params['NSIDE']))
 print("Num. Pixels: {}".format(params['NPIX']))
