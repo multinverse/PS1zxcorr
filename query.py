@@ -4,7 +4,6 @@ import numpy as np
 import requests
 import os, sys, re
 import json
-import exceptions as excep
 from astropy.io import ascii, fits
 from astropy.table import Table, join, hstack, vstack
 
@@ -51,6 +50,7 @@ def query_string(ang0,ang1,radius):
         return query
 
 def query_function(params, constraints):
+    import exception as exc
     params['ang'],params['r'] = parameters(params["NSIDE"],params['pixel'])    
     query   =  query_string(params['ang'][0],params['ang'][1],params['r'])
     jobs    = mastcasjobs.MastCasJobs(context="PanSTARRS_DR2")
@@ -59,7 +59,7 @@ def query_function(params, constraints):
         table = jobs.quick(query, task_name="python cone search")
     except Exception:
         print("Exception. code!=200")
-        table =  excep.handling_exception(params,constraints)
+        table =  exc.handling_exception(params,constraints)
         print("Extracted {} objects from PS1".format(len(table)))
         return table, jobs  
 
@@ -86,3 +86,17 @@ def query_constraints(table,constraints):
         list1 = np.where((table['gdec']>-999)*(table['gra']>-999))
     
     return table[list1]
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+ 
