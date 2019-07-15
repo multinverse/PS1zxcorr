@@ -27,8 +27,9 @@ def handling_exception(params,constraints):
                 subtab = subjobs.quick(subquery, task_name="python cone search")
                 accept = False
             except Exception:
-				time.sleep(60)
-                pass
+				from time import sleep
+				sleep(60)
+				pass
                
         subtab    = qr.fixcolnames(ascii.read(subtab))
         subtab    = qr.query_constraints(subtab, constraints)
