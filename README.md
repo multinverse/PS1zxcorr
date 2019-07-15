@@ -1,4 +1,4 @@
-# PS1code
+# PS1zxcorr
 
 This code was created by Alessandro Marins (University of Sao Paulo) and is owned by BINGO Telescope.
 Its use is to extract optical data from Pan-STARRS1 telescope.
