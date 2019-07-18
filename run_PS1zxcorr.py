@@ -29,7 +29,9 @@ if sys.version_info[0]==2:
 elif sys.version_info[0]==3:
 	import configparser
 	config = configparser.ConfigParser()
-
+else:
+	print("Python version error.")
+	sys.exit(0)
 ###################################################################
 # This part is for extracting information from parameters.ini file
 ###################################################################
