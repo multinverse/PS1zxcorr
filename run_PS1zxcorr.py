@@ -8,7 +8,6 @@
 
 import os,sys
 import argparse
-import ConfigParser
 import numpy as np
 import healpy as hp
 import query as qr
@@ -19,6 +18,17 @@ import write_read_fits as wr
 import maxnside as mx
 
 from time import time,strftime, gmtime
+
+###################################################################
+# Check the python version and import configparser
+###################################################################
+
+if sys.version_info[0]==2:
+	import ConfigParser
+	config = ConfigParser.RawConfigParser()
+elif sys.version_info[0]==3:
+	import configparser
+	config = configparser.ConfigParser()
 
 ###################################################################
 # This part is for extracting information from parameters.ini file
