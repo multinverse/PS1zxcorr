@@ -29,33 +29,30 @@ if sys.version_info[0]==2:
 elif sys.version_info[0]==3:
 	import configparser
 	config = configparser.ConfigParser()
-else:
-	print("Python version error.")
-	sys.exit(0)
 ###################################################################
 # This part is for extracting information from parameters.ini file
 ###################################################################
 
 name_params = os.path.join(os.getcwd(),"parameters.ini")
-config = ConfigParser.RawConfigParser()
 config.read(name_params)
 
-nside           = config.getint("General","nside")
-user            = config.get("General"   ,"user_ps1")
-pwd             = config.get("General"   ,"pwd_ps1")
+user            = config.get(       "General","user_ps1")
+pwd             = config.get(       "General","pwd_ps1")
+nside           = config.getint(    "General","nside")
+restart         = config.getboolean("General","restart")
 
 use_constraint  = config.getboolean("Constraint","use")
-type_constraint = config.get("Constraint"       ,"type")
-band_constraint = config.get("Constraint"       ,"band")
+type_constraint = config.get(       "Constraint","type")
+band_constraint = config.get(       "Constraint","band")
 
 use_flags       = config.getboolean("Flags","use")
-table_flags     = config.getint("Flags"    ,"table")
-band_flags      = config.get("Flags"       ,"band")
-hex_flags       = config.get("Flags"       ,"hexadecimal")
+table_flags     = config.getint(    "Flags","table")
+band_flags      = config.get(       "Flags","band")
+hex_flags       = config.get(       "Flags","hexadecimal")
 
 dec_strips      = config.getboolean("Strips","use_declination_strips")
-dec_center      = config.getfloat("Strips"  ,"declination_center")
-dec_width       = config.getfloat("Strips"  ,"declination_width")
+dec_center      = config.getfloat(  "Strips","declination_center")
+dec_width       = config.getfloat(  "Strips","declination_width")
 
 
 ###############################################################################
@@ -64,7 +61,10 @@ dec_width       = config.getfloat("Strips"  ,"declination_width")
 
 parser = argparse.ArgumentParser(description='Modify by the command terminal parameters in parameters.ini file')
 
+parser.add_argument('--user_ps1'       , action = 'store', dest = 'user'           , default = user           , help = '')
+parser.add_argument('--pwd_ps1'        , action = 'store', dest = 'pwd'            , default = pwd            , help = '')
 parser.add_argument('--nside'          , action = 'store', dest = 'nside'          , default = nside          , help = '')
+parser.add_argument('--restart'        , action = 'store', dest = 'restart'        , default = restart        , help = '')
 
 parser.add_argument('--use_constraint' , action = 'store', dest = 'use_constraint' , default = use_constraint , help = '')
 parser.add_argument('--type_constraint', action = 'store', dest = 'type_constraint', default = type_constraint, help = '')
@@ -75,12 +75,11 @@ parser.add_argument('--table_flags'    , action = 'store', dest = 'table_flags' 
 parser.add_argument('--band_flags'     , action = 'store', dest = 'band_flags'     , default = band_flags     , help = '')
 parser.add_argument('--hex_flags'      , action = 'store', dest = 'hex_flags'      , default = hex_flags      , help = '')
 
-parser.add_argument('--use_declination_strips'     , action = 'store', dest = 'dec_strips'     , default = dec_strips     , help = '')
+parser.add_argument('--use_declination_strips' , action = 'store', dest = 'dec_strips'     , default = dec_strips     , help = '')
 parser.add_argument('--declination_center'     , action = 'store', dest = 'dec_center'     , default = dec_center     , help = '')
 parser.add_argument('--declination_width'      , action = 'store', dest = 'dec_width'      , default = dec_width      , help = '')
 
-parser.add_argument('--user_ps1'      , action = 'store', dest = 'user'            , default = user           , help = '')
-parser.add_argument('--pwd_ps1'       , action = 'store', dest = 'pwd'             , default = pwd            , help = '')
+
 
 
 ###############################################################################
@@ -88,7 +87,10 @@ parser.add_argument('--pwd_ps1'       , action = 'store', dest = 'pwd'          
 ###############################################################################
 arguments = parser.parse_args()
 
+user            = str(arguments.user)
+pwd             = str(arguments.pwd)
 nside           = int(arguments.nside)
+restart         = bool(arguments.restart)
 
 use_constraint  = bool(arguments.use_constraint)
 type_constraint = str(arguments.type_constraint)
@@ -103,8 +105,7 @@ dec_strips      = bool(arguments.dec_strips)
 dec_center      = float(arguments.dec_center)
 dec_width       = float(arguments.dec_width)
 
-user            = str(arguments.user)
-pwd             = str(arguments.pwd)
+
 
 
 ###############################################################################
@@ -161,8 +162,18 @@ print("NSIDE      : {}".format(params['NSIDE']))
 print("Num. Pixels: {}".format(params['NPIX']))
 
 strips = st.pixelstrips(params_strips) if params_strips['dec strips'] else np.arange(params['NPIX'])
+
+if not restart:
+	import file_verification as ver
+	last   = ver.lastpix(NSIDE,"last")
+	if last:
+		strips = st.newtrips(strips,last)
+	else: pass	
+	
 len_strips = len(strips)
 print("It will be {:.2f}% of the sky covered.\n".format(100*float(len_strips)/params['NPIX']))
+
+
 
 for num,pix in enumerate(strips):  
     timei     = time()

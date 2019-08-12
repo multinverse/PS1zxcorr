@@ -39,8 +39,8 @@ def dec2col(dec=None, deg_out=False):
     dec  = np.array(dec)
     ones = np.ones(dec.size)
     
-    down = np.where(dec<-90)[0]
-    up   = np.where(dec>90)[0]
+    down = np.where(dec<-90.)[0]
+    up   = np.where(dec>90.)[0]
     
     if (down.size+up.size)==0:
         if deg_out:
@@ -49,3 +49,9 @@ def dec2col(dec=None, deg_out=False):
             return np.radians(-(dec - 90.))
     else: 
         print("Error")
+
+def newtrips(strips,pix):
+	
+	wispix = np.where(strips==pix)[0] #wispix = where is pix?
+	wispix = int(wispix)
+	return strips[wispix:]
