@@ -16,7 +16,6 @@ import flags as fl
 import strips as st
 import write_read_fits as wr
 import maxnside as mx
-
 from time import time,strftime, gmtime
 
 ###################################################################
@@ -24,11 +23,13 @@ from time import time,strftime, gmtime
 ###################################################################
 
 if sys.version_info[0]==2:
-	import ConfigParser
-	config = ConfigParser.RawConfigParser()
+    import ConfigParser
+    config = ConfigParser.RawConfigParser()
+	
 elif sys.version_info[0]==3:
-	import configparser
-	config = configparser.ConfigParser()
+    import configparser
+    config = configparser.ConfigParser()
+	
 ###################################################################
 # This part is for extracting information from parameters.ini file
 ###################################################################
@@ -54,7 +55,9 @@ dec_strips      = config.getboolean("Strips","use_declination_strips")
 dec_center      = config.getfloat(  "Strips","declination_center")
 dec_width       = config.getfloat(  "Strips","declination_width")
 
-
+divide          = config.getboolean("Divide_of_sky_range","divide")
+Nparts          = config.getint("Divide_of_sky_range","Nparts")
+part            = config.getint("Divide_of_sky_range","part")
 ###############################################################################
 #You can modify any options in the parameters.ini file by the command terminal
 ###############################################################################
@@ -79,8 +82,9 @@ parser.add_argument('--use_declination_strips' , action = 'store', dest = 'dec_s
 parser.add_argument('--declination_center'     , action = 'store', dest = 'dec_center'     , default = dec_center     , help = '')
 parser.add_argument('--declination_width'      , action = 'store', dest = 'dec_width'      , default = dec_width      , help = '')
 
-
-
+parser.add_argument('--divide'  , action = 'store', dest = 'divide'  , default = divide  , help = '')
+parser.add_argument('--Nparts'  , action = 'store', dest = 'Nparts'  , default = Nparts  , help = '')
+parser.add_argument('--part'    , action = 'store', dest = 'part'    , default = part    , help = '')
 
 ###############################################################################
 #Variables
@@ -105,22 +109,22 @@ dec_strips      = bool(arguments.dec_strips)
 dec_center      = float(arguments.dec_center)
 dec_width       = float(arguments.dec_width)
 
-
-
+divide          = bool(arguments.divide)
+Nparts          = int(arguments.Nparts)
+part            = int(arguments.part)
 
 ###############################################################################
 # inputs
 ###############################################################################
 
-NSIDE         = nside
-constraints   = {"use":use_constraint, "type":type_constraint, "band": band_constraint} 
-params_flags  = {"use":use_flags, "table":table_flags, "band":band_flags}
-params_strips = {'dec strips':dec_strips,'dec center':dec_center,'dec width':dec_width}
-hexa_query    = hex_flags
+NSIDE          = nside
+constraints    = {"use":use_constraint, "type":type_constraint, "band": band_constraint} 
+params_flags   = {"use":use_flags, "table":table_flags, "band":band_flags}
+params_strips  = {'dec strips':dec_strips,'dec center':dec_center,'dec width':dec_width}
+hexa_query     = hex_flags
+divideSKYrange = {"divide":divide,"Nparts":Nparts,"part":part}
 
-del nside,use_constraint,type_constraint,band_constraint,use_flags,table_flags,band_flags,dec_strips,dec_center,dec_width,hex_flags
-
-
+del nside, use_constraint, type_constraint, band_constraint, use_flags, table_flags,band_flags, dec_strips,dec_center, dec_width, hex_flags, part, Nparts, divide
 ###############################################################################
 # Access PS1 server
 ###############################################################################
@@ -142,7 +146,6 @@ if not os.environ.get('CASJOBS_WSID'):
     os.environ['CASJOBS_WSID'] = user
 if not os.environ.get('CASJOBS_PW'):
     os.environ['CASJOBS_PW'] = pwd
-
 
 ###############################################################################
 # The program start here
@@ -173,7 +176,10 @@ if not restart:
 len_strips = len(strips)
 print("It will be {:.2f}% of the sky covered.\n".format(100*float(len_strips)/params['NPIX']))
 
-
+if divideSKYrange["divide"]:
+	import fraction_sky_range as fsr
+	print("Fractioning the range and taking the part {0}/{1}".format(divideSKYrange['part'],divideSKYrange['Nparts']))
+	strips = fsr.divideSKY(divideSKYrange,strips)
 
 for num,pix in enumerate(strips):  
     timei     = time()
