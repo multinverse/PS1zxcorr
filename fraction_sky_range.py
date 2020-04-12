@@ -1,5 +1,21 @@
 def divideSKY(divideSKYrange,strips):
     import numpy as np
+    npix_strips = len(strips)
+    n           = int(np.floor(npix_strips/divideSKYrange['Nparts']))
+    rest        = npix_strips - n*divideSKYrange['Nparts']
+    pixs        = np.arange(0,n*divideSKYrange['Nparts']).reshape(divideSKYrange['Nparts'],n)[divideSKYrange["part"]-1]
+    
+    if rest>0:
+        if 1<=divideSKYrange['part']<=rest:
+            pix_add = strips[-rest:][divideSKYrange['part']-1]
+            pixs    = np.hstack((pixs,pix_add))
+    
+    strips  = pixs
+    return strips
+    
+'''
+def divideSKY(divideSKYrange,strips):
+    import numpy as np
     ran   = strips#np.arange(start = 0, stop = NPIX, step = 1)
     try:
         strips = np.split(ran,divideSKYrange['Nparts'])[divideSKYrange['part']-1]
@@ -14,3 +30,6 @@ def divideSKY(divideSKYrange,strips):
         else:
             raise ValueError
     return strips
+
+
+'''
