@@ -8,9 +8,10 @@ def divideSKY(divideSKYrange,strips):
     if rest>0:
         if 1<=divideSKYrange['part']<=rest:
             pix_add = strips[-rest:][divideSKYrange['part']-1]
-            pixs    = np.hstack((pixs,pix_add))
-    
-    strips  = pixs
+            pixs    = np.hstack((strips[pixs],pix_add))
+        strips = strips[pixs]
+    else:
+        strips = strips[pixs]
     return strips
     
 '''
