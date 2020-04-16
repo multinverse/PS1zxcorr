@@ -56,8 +56,9 @@ dec_center      = config.getfloat(  "Strips","declination_center")
 dec_width       = config.getfloat(  "Strips","declination_width")
 
 divide          = config.getboolean("Divide_of_sky_range","divide")
-Nparts          = config.getint("Divide_of_sky_range","Nparts")
-part            = config.getint("Divide_of_sky_range","part")
+Nparts          = config.getint(    "Divide_of_sky_range","Nparts")
+part            = config.getint(    "Divide_of_sky_range","part")
+
 ###############################################################################
 #You can modify any options in the parameters.ini file by the command terminal
 ###############################################################################
@@ -154,10 +155,10 @@ if not os.environ.get('CASJOBS_PW'):
 print("----> Starting PS1zxcorr code <----\n")
 print("Calculating the maximum resolution that does not cause problems for your connection...")
 
-NPIX   = hp.nside2npix(NSIDE)
-params = {"NSIDE":NSIDE, "NPIX":NPIX} 
-params["NSIDE max"] = 8*mx.maxnside(user,pwd)
-params_strips['NSIDE']=params['NSIDE']
+NPIX                   = hp.nside2npix(NSIDE)
+params                 = {"NSIDE":NSIDE, "NPIX":NPIX} 
+params["NSIDE max"]    = 2**10#8*mx.maxnside(user,pwd)
+params_strips['NSIDE'] = params['NSIDE']
 
 print("Maximum resolution is NSIDE: {}\n".format(params['NSIDE max']))
 print("You'll use")
@@ -165,7 +166,7 @@ print("NSIDE      : {}".format(params['NSIDE']))
 print("Num. Pixels: {}".format(params['NPIX']))
 
 strips = st.pixelstrips(params_strips) if params_strips['dec strips'] else np.arange(params['NPIX'])
-
+len_strips = len(strips)
 if not restart:
 	import file_verification as ver
 	last   = ver.lastpix(NSIDE,"last")
@@ -180,7 +181,7 @@ if divideSKYrange["divide"]:
 	import fraction_sky_range as fsr
 	print("Fractioning the range and taking the part {0}/{1}".format(divideSKYrange['part'],divideSKYrange['Nparts']))
 	strips = fsr.divideSKY(divideSKYrange,strips)
-
+print("\n\n")
 for num,pix in enumerate(strips):  
     timei     = time()
     theta,phi = hp.pix2ang(params['NSIDE'],pix, lonlat=True, nest=False)
@@ -189,9 +190,14 @@ for num,pix in enumerate(strips):
     tab, job        = qr.query_function(params, constraints)
     tab             = gal.galaxies_pixel(tab,params)
     tab             = fl.flags_constraints(tab,hexa_query,params_flags)
-    wr.write_fits(tab,params)
-
-    timef    = strftime('%H:%M:%S', gmtime(time()-timei))
+    
+    timef           = strftime('%H:%M:%S', gmtime(time()-timei))
+    
     print("Program's time (hh:mm:ss): {}".format(timef))
     print("Pixel {}".format(pix))
-    print("{:.2f}% completed program\n \n".format(100*(float(num+1)/len_strips)))
+    print("{:.2f}% completed program".format(100*(float(num+1)/len_strips)))
+    
+    if len(tab)>0: wr.write_fits(tab,params)
+    else: print("Not save. 0 galaxies")
+    
+    print("\n\n")
