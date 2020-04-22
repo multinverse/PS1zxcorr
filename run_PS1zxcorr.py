@@ -16,6 +16,7 @@ import flags as fl
 import strips as st
 import write_read_fits as wr
 import maxnside as mx
+import file_verification as ver
 from time import time,strftime, gmtime
 
 ###################################################################
@@ -167,37 +168,63 @@ print("Num. Pixels: {}".format(params['NPIX']))
 
 strips = st.pixelstrips(params_strips) if params_strips['dec strips'] else np.arange(params['NPIX'])
 len_strips = len(strips)
-if not restart:
-	import file_verification as ver
-	last   = ver.lastpix(NSIDE,"last")
-	if last:
-		strips = st.newtrips(strips,last)
-	else: pass	
-	
-len_strips = len(strips)
+
+#if not restart:
+#	last   = ver.lastpix(NSIDE,"last")
+#	if last:
+#		strips = st.newtrips(strips,last)
+#	else: pass	
+#len_strips = len(strips)
+
 print("It will be {:.2f}% of the sky covered.\n".format(100*float(len_strips)/params['NPIX']))
 
 if divideSKYrange["divide"]:
 	import fraction_sky_range as fsr
 	print("Fractioning the range and taking the part {0}/{1}".format(divideSKYrange['part'],divideSKYrange['Nparts']))
 	strips = fsr.divideSKY(divideSKYrange,strips)
+#print(strips)
+#sys.exit(0)
 print("\n\n")
-for num,pix in enumerate(strips):  
-    timei     = time()
-    theta,phi = hp.pix2ang(params['NSIDE'],pix, lonlat=True, nest=False)
-    
-    params['pixel'] = pix
-    tab, job        = qr.query_function(params, constraints)
-    tab             = gal.galaxies_pixel(tab,params)
-    tab             = fl.flags_constraints(tab,hexa_query,params_flags)
-    
-    timef           = strftime('%H:%M:%S', gmtime(time()-timei))
-    
-    print("Program's time (hh:mm:ss): {}".format(timef))
-    print("Pixel {}".format(pix))
-    print("{:.2f}% completed program".format(100*(float(num+1)/len_strips)))
-    
-    if len(tab)>0: wr.write_fits(tab,params)
-    else: print("Not save. 0 galaxies")
-    
-    print("\n\n")
+for num,pix in enumerate(strips):
+	try:
+		timei     = time()
+		theta,phi = hp.pix2ang(params['NSIDE'],pix, lonlat=True, nest=False)
+		
+		params['pixel'] = pix
+		
+		if not ver.exist_or_not_file(params,restart):
+			print(ver.exist_or_not_file(params,restart))
+			tab, job        = qr.query_function(params, constraints)
+			tab             = gal.galaxies_pixel(tab,params)
+			tab             = fl.flags_constraints(tab,hexa_query,params_flags)
+			
+			timef           = strftime('%H:%M:%S', gmtime(time()-timei))
+			
+			print("Program's time (hh:mm:ss): {}".format(timef))
+			print("Pixel {}".format(pix))
+			print("{:.2f}% completed program".format(100*(float(num+1)/len_strips)))
+			
+			if len(tab)>0: wr.write_fits(tab,params)
+			else: print("Not save. 0 galaxies")
+			
+			print("\n\n")
+	
+	except KeyboardInterrupt:
+		sys.exit(0)
+	
+	except Exception as exc:
+		print("Error pixel")
+		str_nside = str(params["NSIDE"])
+		str_pix   = str(pix)
+		path = os.getcwd()
+		path = os.path.join(path,"ERRORS")
+		filename = ".".join(("_".join((str_nside,str_pix)),"err"))
+		ver.file_verification(path,filename,str_nside)
+		path = os.path.join(path,str_nside,filename)
+		err = str(sys.exc_info()[0])
+		f = open(path,"w+")
+		f.write(err)
+		f.write("\n")
+		f.write(str(exc))
+		f.close() 
+		

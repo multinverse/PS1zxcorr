@@ -14,7 +14,7 @@ def divideSKY(divideSKYrange,strips):
             strips = strips[pixs]
     else:
         strips = strips[pixs]
-
+    return strips
     
 '''
 def divideSKY(divideSKYrange,strips):
