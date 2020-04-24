@@ -158,7 +158,7 @@ print("Calculating the maximum resolution that does not cause problems for your 
 
 NPIX                   = hp.nside2npix(NSIDE)
 params                 = {"NSIDE":NSIDE, "NPIX":NPIX} 
-params["NSIDE max"]    = 2**10#8*mx.maxnside(user,pwd)
+params["NSIDE max"]    = 8*mx.maxnside(user,pwd)
 params_strips['NSIDE'] = params['NSIDE']
 
 print("Maximum resolution is NSIDE: {}\n".format(params['NSIDE max']))
@@ -169,21 +169,13 @@ print("Num. Pixels: {}".format(params['NPIX']))
 strips = st.pixelstrips(params_strips) if params_strips['dec strips'] else np.arange(params['NPIX'])
 len_strips = len(strips)
 
-#if not restart:
-#	last   = ver.lastpix(NSIDE,"last")
-#	if last:
-#		strips = st.newtrips(strips,last)
-#	else: pass	
-#len_strips = len(strips)
-
 print("It will be {:.2f}% of the sky covered.\n".format(100*float(len_strips)/params['NPIX']))
 
 if divideSKYrange["divide"]:
 	import fraction_sky_range as fsr
 	print("Fractioning the range and taking the part {0}/{1}".format(divideSKYrange['part'],divideSKYrange['Nparts']))
 	strips = fsr.divideSKY(divideSKYrange,strips)
-#print(strips)
-#sys.exit(0)
+
 print("\n\n")
 for num,pix in enumerate(strips):
 	try:
