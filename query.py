@@ -31,10 +31,9 @@ def fixcolnames(tab):
         newname = m.group('name')
         tab.rename_column(c,newname)
     return tab
-   
-    
+
 def query_string(ang0,ang1,radius):
-        query = """select sot.objID, sot.uniquePspsSTid, sot.ippObjID, sot.surveyID, sot.tessID, sot.projectionID, sot.skyCellID, sot.randomStackObjID, sot.primaryDetection, sot.bestDetection, sot.dvoRegionID, sot.processingVersion,
+    query = """select sot.objID, sot.uniquePspsSTid, sot.ippObjID, sot.surveyID, sot.tessID, sot.projectionID, sot.skyCellID, sot.randomStackObjID, sot.primaryDetection, sot.bestDetection, sot.dvoRegionID, sot.processingVersion,
  sot.gippDetectID, sot.gstackDetectID, sot.gstackImageId, sot.gra, sot.gdec, sot.graErr, sot.gdecErr, sot.gEpoch, sot.gPSFMag, sot.gPSFMagErr, sot.gApMag, sot.gApMagErr, sot.gKronMag, sot.gKronMagErr, sot.ginfoFlag, sot.ginfoFlag2, sot.ginfoFlag3, sot.gnFrames,
  sot.rippDetectID, sot.rstackDetectID, sot.rstackImageId, sot.rra, sot.rdec, sot.rraErr, sot.rdecErr, sot.rEpoch, sot.rPSFMag, sot.rPSFMagErr, sot.rApMag, sot.rApMagErr, sot.rKronMag, sot.rKronMagErr, sot.rinfoFlag, sot.rinfoFlag2, sot.rinfoFlag3, sot.rnFrames,
  sot.iippDetectID, sot.istackDetectID, sot.istackImageId, sot.ira, sot.idec, sot.iraErr, sot.idecErr, sot.iEpoch, sot.iPSFMag, sot.iPSFMagErr, sot.iApMag, sot.iApMagErr, sot.iKronMag, sot.iKronMagErr, sot.iinfoFlag, sot.iinfoFlag2, sot.iinfoFlag3, sot.inFrames,
@@ -47,7 +46,9 @@ def query_string(ang0,ang1,radius):
 
  where sot.primaryDetection = 1 
 """ 
-        return query
+    return query
+        
+        
 
 def query_function(params, constraints):
     import exception as exc
@@ -86,17 +87,3 @@ def query_constraints(table,constraints):
         list1 = np.where((table['gdec']>-999)*(table['gra']>-999))
     
     return table[list1]
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
- 
