@@ -1,0 +1,4 @@
+python2 
+numpy==1.16.5
+healpy==1.13.0
+astropy==2.0.12
